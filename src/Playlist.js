@@ -1,9 +1,8 @@
 import { useState } from 'react';
 import Tracklist from './Tracklist.js';
+// import './Playlist.css';
 
 const Playlist = props => {
-
-    const [playlist, setPlaylist] = useState([]);
 
     const handleSubmit = () => {
 
@@ -11,8 +10,11 @@ const Playlist = props => {
 
     return (
         <>
-            <Tracklist tracklist={playlist} />
-            <button>Add to Spotify</button>
+            <h2>Playlist</h2>
+            <div className='list'>
+                <Tracklist tracklist={props.playlist} type='playlist' removeSong={props.removeSong} />
+            </div>
+            {props.playlist.length > 0 ? <button onClick={handleSubmit}>Add to Spotify</button> : ''}
         </>
     )
 }
