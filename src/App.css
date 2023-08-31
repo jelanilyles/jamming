@@ -6,15 +6,6 @@ header {
   grid-area: header;
 }
 
-#auth {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-#auth button {
-  margin: 20px 40px;
-}
-
 .App {
   margin: 20px;
   display: grid;

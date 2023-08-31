@@ -4,42 +4,17 @@ import Tracklist from './Tracklist.js';
 
 const Playlist = props => {
 
-    const [name, setName] = useState('');
-
-    const handleSubmit = async () => {
-        try {
-            const response = await fetch('https://api.spotify.com/v1/users/1212000590/playlists', {
-                method: 'POST',
-                headers: {
-                    // 'Accept': 'application/json',
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + props.token
-                },
-                body: JSON.stringify({
-                    name: name,
-                    public: true,
-                    description: 'new playlist'
-                })
-            });
-
-            if(response.ok) {
-                const jsonResponse = await response.json();
-                console.log(jsonResponse);
-            }
-        } catch(e) {
-            console.log(e);
-        }
-
+    const handleName = e => {
+        props.onNameChange(e.target.value);
     }
 
     return (
         <>
-            <h2>Playlist</h2>
-            <input type='text' value={name} onChange={(e) => setName(e.target.value)} name='playlist_name' />
+            <input value={props.playlistName} onChange={handleName} placeholder='Name your playlist'/>
+            <button onClick={props.onSave}>Save</button>
             <div className='list'>
-                <Tracklist tracklist={props.playlist} type='playlist' removeSong={props.removeSong} />
+                <Tracklist tracklist={props.playlistTracks} type='playlist' removeTrack={props.onRemove} />
             </div>
-            {props.playlist.length > 0 ? <button onClick={handleSubmit}>Add to Spotify</button> : ''}
         </>
     )
 }
