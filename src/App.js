@@ -5,25 +5,50 @@ import SearchResults from './SearchResults.js';
 import Playlist from './Playlist.js';
 import Spotify from './Spotify.js';
 
-const App = () => {
-  const [playlistTracks, setPlaylistTracks] = useState([]);
-  const [playlistName, setPlaylistName] = useState('New Playlist');
-  const [searchResults, setSearchResults] = useState([]);
+// const getInitialState = str => {
+//   const state = localStorage.getItem(str);
 
-  const search = useCallback((term) => {
-    Spotify.search(term).then(setSearchResults);
-  }, []);
+//   return state;
+// }
+
+// const setInitialState = (str, val) => {
+//   localStorage.setItem(str, val);
+// }
+
+
+const App = () => {
+  const [playlistTracks, setPlaylistTracks] = useState(localStorage.getItem('playlist_tracks') && localStorage.getItem('playlist_tracks') !== '[]' ? JSON.parse(localStorage.getItem('playlist_tracks')) : []);
+  const [playlistName, setPlaylistName] = useState(localStorage.getItem('playlist_name') ? localStorage.getItem('playlist_name') : 'New Playlist');
+  const [searchResults, setSearchResults] = useState(localStorage.getItem('search_results') && localStorage.getItem('search_results') !== '[]' ? JSON.parse(localStorage.getItem('search_results')) : []);
+
+  if(playlistTracks) { localStorage.setItem('playlist_tracks', JSON.stringify(playlistTracks)); }
+  if(searchResults) { localStorage.setItem('search_results', JSON.stringify(searchResults)); }
+
+  Spotify.getAccessToken();
+
+  // const search = useCallback((term) => {
+  //   const results = Spotify.search(term);
+  //   setSearchResults(results);
+  //   console.log(searchResults);
+  // }, []);
+
+
+  const search = async (term) => {
+    const results = await Spotify.search(term);
+    console.log('results: '+results);
+    setSearchResults(results);
+  }
 
   const addTrack = useCallback((song) => {
-      setPlaylistTracks(prev => [...prev, song]);
+      setPlaylistTracks(prev => { return [...prev, song] });
   }, []);
 
   const removeTrack = useCallback((index) => {
-    setPlaylistTracks(prev => prev.toSpliced(index,1));
+    setPlaylistTracks(prev => { prev.toSpliced(index,1) });
   }, []);
 
   const updatePlaylistName = useCallback((name) => {
-    setPlaylistName(name);
+    setPlaylistName(name, sessionStorage.setItem('playlist_name', playlistName));
   }, []);
 
   const savePlaylist = () => {
@@ -31,6 +56,8 @@ const App = () => {
     Spotify.savePlaylist(playlistName,uris);
     setPlaylistTracks([]);
     setPlaylistName('');
+    sessionStorage.removeItem('playlist_name');
+    sessionStorage.removeItem('playlist_tracks');
   }
 
   return (

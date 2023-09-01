@@ -3,8 +3,11 @@ import './SearchBar.css';
 
 const SearchBar = props => {
 
-    const [term, setTerm] = useState('');
-    
+    const last_term = localStorage.getItem('last_search') || '';
+
+    const [term, setTerm] = useState(last_term);
+
+    localStorage.setItem('last_search', term);
 
     const handleSearchTerm = useCallback((e) => {
         setTerm(e.target.value);
@@ -17,7 +20,7 @@ const SearchBar = props => {
 
     return (
         <div className='form'>
-            <input placeholder='Enter song title' onChange={handleSearchTerm} />
+            <input placeholder='Enter song title' onChange={handleSearchTerm} value={term} />
             <button type='submit' onClick={search}>Search</button>
         </div>
     );

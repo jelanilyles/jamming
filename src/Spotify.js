@@ -3,7 +3,9 @@ const client_id = '5a0432382920484a8e0536a62123dfd0';
 const redirect_uri = 'http://localhost:3000/callback';
 
 const Spotify = {
-    getAccessToken() {
+    getAccessToken(term='') {
+        
+        // let mount = true;
         if(accessToken){
             return accessToken;
         }
@@ -17,41 +19,53 @@ const Spotify = {
             window.history.pushState('Access Token', null, '/');
             return accessToken;
         } else {
+            // mount = false;
+            console.log('call');
             const accessUrl = `https://accounts.spotify.com/authorize?client_id=${client_id}&response_type=token&scope=playlist-modify-public&redirect_uri=${redirect_uri}`;
             window.location = accessUrl;
         }
     },
 
-    search(term) {
-        const accessToken = Spotify.getAccessToken();
+    async search(term) {
+        const accessToken = await Spotify.getAccessToken(term);
+        // console.log(accessToken);
 
-        return fetch(`https://api.spotify.com/v1/search?q='+${term}+'&type=track`,{
-            headers: {
-                Authorization: `Bearer ${accessToken}`
-            },
-        }).then(response => {
-            return response.json();
-        }).then(jsonResponse => {
-            if(!jsonResponse.tracks) {
-                return [];
+        try {
+            const response = await fetch(`https://api.spotify.com/v1/search?q='+${term}+'&type=track`,{
+                headers: {
+                    Authorization: `Bearer ${accessToken}`
+                },
+            });
+            if(response.ok) {
+                const jsonResponse = await response.json();
+                // console.log(jsonResponse);
+                if(!jsonResponse.tracks) {
+                    return [];
+                }
+                const results = await jsonResponse.tracks.items.map(track => ({
+                    id: track.id,
+                    name: track.name,
+                    artist: track.artists[0].name,
+                    album: track.album.name,
+                    cover: track.album.images[2].url,
+                    uri: track.uri,
+                    preview: track.preview_url
+                }));
+
+                console.log('data: '+results);
+                return results;
             }
-            return jsonResponse.tracks.items.map(track => ({
-                id: track.id,
-                name: track.name,
-                artist: track.artists[0].name,
-                album: track.album.name,
-                cover: track.album.images[2].url,
-                uri: track.uri,
-                preview: track.preview_url
-            }));
-        });
+        } catch(e) {
+            console.log(e);
+        }
     },
-    savePlaylist(name, uris) {
+
+    async savePlaylist(name, uris) {
         if(!name || !uris){
             return;
         }
 
-        const accessToken = Spotify.getAccessToken();
+        const accessToken = await Spotify.getAccessToken();
         const headers = {Authorization: `Bearer ${accessToken}`};
 
         return fetch(`https://api.spotify.com/v1/me`, {
