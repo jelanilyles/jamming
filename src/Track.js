@@ -1,11 +1,8 @@
-import { useState } from 'react';
 import './Track.css';
 
 const Track = props => {
 
     const track = props.track;
-    const id = track.id;
-
 
     const addToPlaylist = () => {
         props.addTrack(props.track);
