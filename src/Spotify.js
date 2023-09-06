@@ -1,6 +1,6 @@
 let accessToken;
 const client_id = '5a0432382920484a8e0536a62123dfd0';
-const redirect_uri = 'http://localhost:3000/callback';
+const redirect_uri = 'https://zippy-druid-2409d7.netlify.app/callback'; // 'http://localhost:3000/callback';
 
 const Spotify = {
     getAccessToken(term='') {
