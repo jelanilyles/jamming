@@ -61,6 +61,7 @@ const Spotify = {
     },
 
     async savePlaylist(name, uris) {
+        // console.log('call');
         if(!name || !uris){
             return;
         }

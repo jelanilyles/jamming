@@ -9,14 +9,16 @@ const SearchBar = props => {
 
     localStorage.setItem('last_search', term);
 
+    const {onSearch} = props;
+
     const handleSearchTerm = useCallback((e) => {
         setTerm(e.target.value);
     },[]);
 
     const search = useCallback(() => {
-        props.onSearch(term);
+        onSearch(term);
     },
-    [props.onSearch, term]);
+    [onSearch, term]);
 
     return (
         <div className='form'>

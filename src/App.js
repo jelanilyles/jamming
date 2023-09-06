@@ -49,7 +49,7 @@ const App = () => {
 
   const updatePlaylistName = useCallback((name) => {
     setPlaylistName(name, sessionStorage.setItem('playlist_name', playlistName));
-  }, []);
+  }, [playlistName]);
 
   const savePlaylist = () => {
     const uris = playlistTracks.map((track) => track.uri);
